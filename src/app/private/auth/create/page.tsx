@@ -44,20 +44,28 @@ const UploadPage = () => {
       const res = await axios.post("/api/auth/forum", formData);
       setSuccess("Project uploaded successfully!");
       console.log(res.data);
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Something went wrong.");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Something went wrong.");
+      } else {
+        setError("Unexpected error occurred.");
+      }
     }
   }
 
   return (
     <div className="min-h-screen pt-24 px-4">
       <div className="max-w-md mx-auto bg-white dark:bg-gray-900 p-8 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-semibold mb-6 text-center text-foreground">Upload your project</h1>
+        <h1 className="text-3xl font-semibold mb-6 text-center text-foreground">
+          Upload your project
+        </h1>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="title">Title</label>
+            <label className="block text-sm font-medium mb-1" htmlFor="title">
+              Title
+            </label>
             <input
               type="text"
               id="title"
@@ -72,7 +80,12 @@ const UploadPage = () => {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="description">Description</label>
+            <label
+              className="block text-sm font-medium mb-1"
+              htmlFor="description"
+            >
+              Description
+            </label>
             <input
               type="text"
               id="description"
@@ -87,7 +100,9 @@ const UploadPage = () => {
 
           {/* Image File */}
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="image">Image</label>
+            <label className="block text-sm font-medium mb-1" htmlFor="image">
+              Image
+            </label>
             <input
               type="file"
               id="image"
@@ -101,7 +116,12 @@ const UploadPage = () => {
 
           {/* Tech Stack */}
           <div>
-            <label className="block text-sm font-medium mb-1" htmlFor="techStack">Tech Stack</label>
+            <label
+              className="block text-sm font-medium mb-1"
+              htmlFor="techStack"
+            >
+              Tech Stack
+            </label>
             <input
               type="text"
               id="techStack"
@@ -114,7 +134,9 @@ const UploadPage = () => {
             />
           </div>
 
-          <Button type="submit" className="w-full my-5">Submit</Button>
+          <Button type="submit" className="w-full my-5">
+            Submit
+          </Button>
         </form>
 
         {success && <p className="text-green-600 mt-2">{success}</p>}

@@ -1,9 +1,8 @@
 import React from 'react'
 
-const page = async ({params}) => {
-    const slug = await params
+const page = async () => {
   return (
-    <div>{params.id}</div>
+    <div>test</div>
   )
 }
 

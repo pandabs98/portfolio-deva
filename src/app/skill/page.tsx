@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { cn } from "@/lib/utils"; // If you're using Shadcn's cn utility
+
 
 // Skill type
 interface Skill {
@@ -96,7 +96,7 @@ const SkillCard: React.FC<{ skill: Skill }> = ({ skill }) => {
     requestAnimationFrame(animateNumber);
 
     const interval = setInterval(() => {
-      setDisplayPercentage((prev) => {
+      setDisplayPercentage(() => {
         const newPercentage = Math.min(
           skill.proficiency + Math.random() * 0.5,
           100

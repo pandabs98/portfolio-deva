@@ -20,38 +20,42 @@ const ContactPage = () => {
 
   // Handle Submit
   async function handleSubmit() {
-    setError("");
-    setSuccess("");
+  setError("");
+  setSuccess("");
 
-    if (!details.name || !details.email || !details.message) {
-      setError("All fields are required.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(details),
-      });
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.error || "Something went wrong");
-      }
-
-      setSuccess("Message submitted successfully!");
-      setDetails({ name: "", email: "", message: "" });
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  if (!details.name || !details.email || !details.message) {
+    setError("All fields are required.");
+    return;
   }
+
+  setLoading(true);
+  try {
+    const res = await fetch("/api/auth/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(details),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.error || "Something went wrong");
+    }
+
+    setSuccess("Message submitted successfully!");
+    setDetails({ name: "", email: "", message: "" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      setError(error.message);
+    } else {
+      setError("Something went wrong.");
+    }
+  } finally {
+    setLoading(false);
+  }
+}
 
   return (
     <section className=" body-font relative">

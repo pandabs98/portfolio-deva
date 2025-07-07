@@ -5,33 +5,50 @@ import axios from "axios";
 import { Pencil, Trash, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+
+// Forum project type
+type ForumProject = {
+  _id: string;
+  title: string;
+  description: string;
+  techStack: string[];
+  image: string;
+};
+
+// Contact type
+type Contact = {
+  _id: string;
+  name: string;
+  email: string;
+  message: string;
+};
 
 const DashboardPage = () => {
-  const [data, setData] = useState<any[]>([]);
-  const [error, setError] = useState("");
+  const [data, setData] = useState<ForumProject[]>([]);
+  const [error, setError] = useState<string>("");
   const [mounted, setMounted] = useState(false);
-  const [contacts, setContacts] = useState<any[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [loadingContacts, setLoadingContacts] = useState(true);
 
   const router = useRouter();
 
-  // Logout Function
   const handleLogout = async () => {
     try {
       await axios.post("/api/auth/logout");
-      router.push("/private/auth/login"); // Redirect after logout
-    } catch (err) {
+      router.push("/private/auth/login");
+    } catch {
       alert("Logout failed");
     }
   };
 
-  // Fetch Forum Data
   const fetchProjects = async () => {
     try {
       const response = await axios.get("/api/auth/forum");
       setData(response.data.data || []);
-    } catch (error: any) {
-      setError(error.message || "Failed to fetch data");
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : "Unknown error";
+      setError(errMsg);
     }
   };
 
@@ -39,8 +56,9 @@ const DashboardPage = () => {
     try {
       await axios.delete(`/api/auth/forum?id=${id}`);
       await fetchProjects();
-    } catch (error: any) {
-      alert("Failed to delete project: " + (error.message || "Unknown error"));
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : "Unknown error";
+      alert("Failed to delete project: " + errMsg);
     }
   };
 
@@ -48,8 +66,9 @@ const DashboardPage = () => {
     try {
       await axios.put(`/api/auth/forum?id=${id}`);
       await fetchProjects();
-    } catch (error: any) {
-      alert("Failed to update project: " + (error.message || "Unknown error"));
+    } catch (error: unknown) {
+      const errMsg = error instanceof Error ? error.message : "Unknown error";
+      alert("Failed to update project: " + errMsg);
     }
   };
 
@@ -57,8 +76,6 @@ const DashboardPage = () => {
     try {
       const res = await axios.get("/api/auth/contact");
       setContacts(res.data.data || []);
-    } catch (err) {
-      console.error("Failed to fetch contact details");
     } finally {
       setLoadingContacts(false);
     }
@@ -68,30 +85,29 @@ const DashboardPage = () => {
     try {
       await axios.delete(`/api/auth/contact/${id}`);
       await fetchContactDetails();
-    } catch (err) {
+    } catch {
       alert("Failed to delete contact.");
     }
   };
 
   useEffect(() => {
-  const checkAuth = async () => {
-    try {
-      const res = await axios.get("/api/auth/check-session");
-      if (res.status !== 200 || !res.data.authenticated) {
+    const checkAuth = async () => {
+      try {
+        const res = await axios.get("/api/auth/check-session");
+        if (res.status !== 200 || !res.data.authenticated) {
+          router.push("/private/auth/login");
+        } else {
+          setMounted(true);
+          fetchProjects();
+          fetchContactDetails();
+        }
+      } catch {
         router.push("/private/auth/login");
-      } else {
-        setMounted(true);
-        fetchProjects();
-        fetchContactDetails();
       }
-    } catch {
-      router.push("/private/auth/login"); // Redirect if any error
-    }
-  };
+    };
 
-  checkAuth();
-}, []);
-
+    checkAuth();
+  }, [router]);
 
   if (!mounted) return null;
   if (error) return <div>Error: {error}</div>;
@@ -133,7 +149,13 @@ const DashboardPage = () => {
               </p>
 
               <div className="mt-4 relative w-full">
-                <img src={item.image} alt={item.title} className="rounded-md max-w-xs ml-auto hidden group-hover:block" />
+                <Image
+                  src={item.image}
+                  alt={item.title}
+                  width={300}
+                  height={200}
+                  className="rounded-md hidden group-hover:block ml-auto"
+                />
               </div>
             </div>
           ))}

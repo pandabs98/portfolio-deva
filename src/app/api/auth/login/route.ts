@@ -7,13 +7,19 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "refreshsecret";
 
-function generateAccessToken(user: any) {
+type MinimalUser = {
+  _id: string;
+  email: string;
+};
+
+function generateAccessToken(user: MinimalUser) {
   return jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: "3d" });
 }
 
-function generateRefreshToken(user: any) {
+function generateRefreshToken(user: MinimalUser) {
   return jwt.sign({ id: user._id, email: user.email }, JWT_REFRESH_SECRET, { expiresIn: "7d" });
 }
+
 
 export async function POST(req: NextRequest) {
   await dbConnect();

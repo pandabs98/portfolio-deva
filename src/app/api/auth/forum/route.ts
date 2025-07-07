@@ -22,7 +22,8 @@ export async function POST(req: NextRequest) {
   // ✅ Verify token
   try {
     jwt.verify(token, JWT_SECRET);
-  } catch (err) {
+  } catch (error) {
+    console.log(error)
     return NextResponse.json({ error: "Invalid or expired token" }, { status: 403 });
   }
 
@@ -83,6 +84,7 @@ export async function GET(){
             {status: 200}
         )
     } catch (error) {
+      console.log(error)
         return NextResponse.json(
             {error: "not able to connect to database"},
             {status: 500}

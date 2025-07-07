@@ -1,5 +1,5 @@
 import mongoose,{model, models} from "mongoose";
-import bcrypt from 'bcryptjs';
+
 
 
 export interface IForum extends mongoose.Document {

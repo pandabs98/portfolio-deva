@@ -10,6 +10,14 @@ import SkillPage from "./skill/page";
 import WorkPage from "./work/page";
 import ContactPage from "./contact/page";
 
+type ForumPost = {
+  _id: string;
+  title: string;
+  description: string;
+  image: string;
+  techStack: string[];
+};
+
 export default function Home() {
   const words = ["Secure", "Safe", "Trusted", "Modern"];
   const variants = {
@@ -17,22 +25,26 @@ export default function Home() {
     visible: { opacity: 1, x: 0 },
   };
 
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<ForumPost[]>([]);
   const [error, setError] = useState("");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    const fetchData = async () => {
-      try {
-        const response = await axios.get("/api/auth/forum");
-        setData(response.data.data);
-      } catch (error: any) {
-        setError(error.message || "Failed to fetch data");
+  setMounted(true);
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("/api/auth/forum");
+      setData(response.data.data);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("Failed to fetch data");
       }
-    };
-    fetchData();
-  }, []);
+    }
+  };
+  fetchData();
+}, []);
 
   if (!mounted) return null;
   if (error) return <div className="text-center text-red-500">{error}</div>;
@@ -51,7 +63,8 @@ export default function Home() {
               animate="visible"
               transition={{ delay: 1 }}
             >
-              Hi I'm Bhagyashwariya
+              Hi I&apos;m Bhagyashwariya
+
             </motion.h1>
             <motion.p
               className="text-5xl font-semibold text-muted-foreground"

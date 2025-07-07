@@ -6,7 +6,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
-  const router = useRouter()
+  const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -30,9 +30,14 @@ const LoginPage = () => {
       console.log("Login successful:", res.data);
 
       router.push('/private/auth/dashboard');
-    } catch (err: any) {
-      setError(err.response?.data?.error || "Login failed");
-      console.error("Login failed:", err.response?.data);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.error || "Login failed");
+        console.error("Login failed:", err.response?.data);
+      } else {
+        setError("An unexpected error occurred");
+        console.error("Unexpected error:", err);
+      }
     }
   }
 

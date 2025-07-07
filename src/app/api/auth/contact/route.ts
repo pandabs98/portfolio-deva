@@ -21,10 +21,11 @@ export async function POST(req: NextRequest) {
             message
         })
         return NextResponse.json(
-            {message: "Message saved successfully"},
+            {message: "Message saved successfully", data},
             {status: 201}
         )
     } catch (error) {
+        console.log(error)
         return NextResponse.json(
             { error: "Data not saved to databse" },
             { status: 500 }
@@ -32,13 +33,13 @@ export async function POST(req: NextRequest) {
     }
 }
 
-export async function GET(req: NextRequest){
+export async function GET(){
     await dbConnect();
     try {
         const data = await Contact.find();
         if(!data){
             return NextResponse.json(
-                {error: "contact details not found"},
+                {error: "contact details not found", data},
                 {status: 400}
             )
         }
@@ -47,6 +48,7 @@ export async function GET(req: NextRequest){
             {status: 200}
         )
     } catch (error) {
+        console.log(error)
         return NextResponse.json(
             {error: "no data found"},
             {status: 500}

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import Image from "next/image";
 
 interface ProjectItem {
   image: string;
@@ -36,7 +37,7 @@ const ProjectDetailModal: React.FC<ModalProps> = ({ isOpen, onClose, project }) 
       <DialogContent className="max-w-3xl bg-background text-foreground p-0 overflow-hidden rounded-lg">
         <div className="relative">
           {/* Image */}
-          <img
+          <Image
             src={project.image}
             alt={project.title}
             className="w-full h-64 object-cover"

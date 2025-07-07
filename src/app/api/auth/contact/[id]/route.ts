@@ -5,10 +5,8 @@ import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
 
-// Correct signature for dynamic API route
 export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
+  req: NextRequest // Only NextRequest is passed, no context object
 ) {
   await dbConnect();
 
@@ -26,7 +24,14 @@ export async function DELETE(
       return NextResponse.json({ error: "Invalid or expired token" }, { status: 403 });
     }
 
-    const { id } = params;
+    // --- Start of change: Extracting ID from req.url ---
+    const url = new URL(req.url);
+    // Assuming the URL structure is /api/auth/contact/[id]
+    // Example: /api/auth/contact/123
+    const pathSegments = url.pathname.split('/');
+    // The ID would be the last segment
+    const id = pathSegments[pathSegments.length - 1];
+    // --- End of change ---
 
     if (!id) {
       return NextResponse.json({ error: "Missing contact ID" }, { status: 400 });
